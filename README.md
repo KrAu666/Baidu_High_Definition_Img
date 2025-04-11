@@ -1,4 +1,3 @@
-```markdown
 # 🐗 图片爬取与标注工具
 
 本工具提供一站式图片爬取和自动化标注解决方案，支持从百度图片批量下载指定内容并生成YOLO格式训练数据。
@@ -14,7 +13,7 @@
 - 多线程加速下载
 
 ### 📂 文件管理系统
-- 三级目录结构（原始分类/清洗后数据/标注文件）
+- 二级目录结构（原始分类/清洗后数据）
 - 自动文件名冲突处理
 - EXIF信息校验
 
@@ -30,7 +29,7 @@
 
 ### 1️⃣ 环境配置
 ```bash
-# 安装依赖（Python 3.8+）
+# 安装依赖
 pip install -r requirements.txt
 ```
 
@@ -60,7 +59,7 @@ words = [
 file_name = 'licence_plate'
 
 # YOLO标签映射表
-keyword = ['test', 'licence_plate']
+keyword = ['green', 'blue']
 ```
 
 ### 3️⃣ 运行指令
