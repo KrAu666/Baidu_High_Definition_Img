@@ -1,6 +1,4 @@
 import json
-import time
-
 import requests
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -105,7 +103,7 @@ def download_img(quantity, download_img_quantity, word, error_number, file_name)
             path = f'./img/{file_name}/{download_img_quantity}.jpg'
             with open(path, 'wb') as f:
                 f.write(response.content)
-            print(f"第{download_img_quantity}张图片，{ObjURL}图片已成功保存！")
+            print(f"{file_name}    第{download_img_quantity}张图片，{ObjURL}图片已成功保存！")
 
             # 筛选不符合目标分辨率的图片
             # download_img_quantity = get_state(path, download_img_quantity)
@@ -123,7 +121,7 @@ def download_keyword(word, key, img_quantity):
         error_number = 0
         range_quantity, check = creat_json(key_word)
 
-        # 获得接下来的range_quantity
+        # 获得接下来的range_quantity，当前文件夹下的具体个数
         download_img_quantity = file_name_number(word)
 
         # 初始化变量
@@ -136,14 +134,13 @@ def download_keyword(word, key, img_quantity):
             print(f'{key_word}    已爬取结束')
             continue
         while True:
-            if download_img_quantity - img_quantity < download_img_quantity:
+            if img_quantity > download_img_quantity:
                 # 有时候处理json的时候会出现问题，需要同一个try处理一下，只有极个别几个会出现问题
                 download_img_quantity, error_number = download_img(range_quantity, download_img_quantity, key_word, error_number, word)
                 if download_img_quantity is None:
                     continue
-
                 range_quantity += 1
-                update_json(key_word,error_number)
+                update_json(key_word, error_number)
                 if error_number > 10:
                     print(f'{key_word}    图片已被全部爬取')
                     break
@@ -197,12 +194,73 @@ if __name__ == '__main__':
     # 需要爬取的图片数量,爬取的图片只会多于这个数不会少于这个数
     img_quantity = 2000
 
-    file_name = 'animals_img'
-
-    keyword = ['bird', "cat", "cow", "sheep", "horse", "dog", "person"]
-
+    # 采集配置组（支持多分类）
+    """
+    words格式为列表，列表内的内容以字典的形式存在
+    word指要爬的该类目名称，例如"blue"指代蓝色车牌，会创建一个临时文件夹以便文件的爬取以及分类
+    key指该文件夹类目下的爬取关键词,例如需要爬取蓝色车牌的图片，经过百度查找后，发现“车牌”，“绿色车牌”这两个关键词下的图片质量最高，key就设置为['车牌', '绿色车牌']
+    key在设置之前可以现在百度查找多几个关键词，关键词所对应的图片质量越高，爬取清洗和后续标注的难度也越低
+    """
     words = [
+        {
+            'word': 'blue',
+            'key': ['车牌', '绿色车牌']
+        }
     ]
+
+    """
+    爬取文件并清洗完成后所有图片的存在位置
+    最后所有图片会被整理到同一个文件夹中，方便拉框
+    """
+    # 最终输出目录
+    file_name = 'licence_plate'
+
+    """
+    keyword的顺序对应着yolo格式的txt文件第一个索引
+        例如: 
+        ['blue', 'green', 'black']
+        - file_name(上面设置清洗完成后的文件夹，后续标注请在这个文件夹内标注，生成的json文件请一定要直接生成在file_name文件夹中，标注完成后才可以全自动化处理)
+            - blue
+                - 1.jpg
+                - 1.json
+                
+    json格式如下
+    {
+      "version": "0.4.15",
+      "flags": {},
+      "shapes": [
+        {
+          "label": "licence_plate",
+          "text": "",
+          "points": [
+            [
+              323.0,
+              351.0
+            ],
+            [
+              602.0,
+              687.0
+            ]
+          ],
+          "group_id": null,
+          "shape_type": "rectangle",
+          "flags": {}
+        }
+      ],
+      "imagePath": "1.jpg",
+      "imageData": null,
+      "imageHeight": 1120,
+      "imageWidth": 800,
+      "text": ""
+    }
+    最后会被重新计算并储存在1.txt中
+    此时他在txt中的结果为1 0.578125 0.463393 0.34875 0.300893
+    txt中的1对应着keyword的索引1
+    不直接利用列表生成式是因为需要尽量避免爬取完成后但是需求有变，需要将多个总文件夹合并在一起的情况
+    如果不需要也可以使用列表生成式，但是更推荐自己编写keyword列表，keyword列表对应拉框所用的关键词，支持过滤其他无效关键词的框，可以和ai拉框结合
+    """
+    # YOLO标签映射表
+    keyword = ['test', 'licence_plate']
 
     print("""
     1:  爬虫模式

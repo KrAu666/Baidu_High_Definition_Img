@@ -8,12 +8,12 @@ def txt_to_folder(file_name):
     source_images_folder = file_name
     source_labels_folder = file_name
     # 指定目标文件夹路径
-    target_train_images_folder = r'animals/images\train'
-    target_train_labels_folder = r'animals/labels\train'
-    target_test_images_folder = r'animals/images\test'
-    target_test_labels_folder = r'animals/labels\test'
-    target_val_images_folder = r'animals/images\val'
-    target_val_labels_folder = r'animals/labels\val'
+    target_train_images_folder = fr'{file_name}/images\train'
+    target_train_labels_folder = fr'{file_name}/labels\train'
+    target_test_images_folder = fr'{file_name}/images\test'
+    target_test_labels_folder = fr'{file_name}/labels\test'
+    target_val_images_folder = fr'{file_name}/images\val'
+    target_val_labels_folder = fr'{file_name}/labels\val'
 
     # 确保目标文件夹存在，如果不存在则创建
     for folder in [target_train_images_folder, target_train_labels_folder,

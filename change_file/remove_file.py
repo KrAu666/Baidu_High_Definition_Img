@@ -1,14 +1,13 @@
 import os
 import hashlib
+import time
+
 from PIL import Image
 import logging
 from tqdm import tqdm
 import shutil
 
-# 改变当前工作目录
-os.chdir('img')
-
-def remove_new_file(words,file_name):
+def remove_new_file(words, file_name):
     # 创建名为file_name的文件夹
     target_folder = file_name
     if not os.path.exists(target_folder):
@@ -18,15 +17,16 @@ def remove_new_file(words,file_name):
     for item in words:
         word = item['word']
         # 检查当前word对应的文件夹是否存在
-        if os.path.exists(word):
+        text = f'img/{word}'
+        if os.path.exists(text):
             # 将该文件夹移动到file_name文件夹中
-            shutil.move(word, os.path.join(target_folder, word))
+            shutil.move(text, os.path.join(target_folder, word))
 
 
 
 def main(file_name):
     # 配置日志记录
-    logging.basicConfig(filename='../img/image_processing.log', level=logging.INFO,
+    logging.basicConfig(filename='img/image_processing.log', level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
     # 定义目标文件夹
