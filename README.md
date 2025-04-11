@@ -79,7 +79,7 @@ python main.py
 1. JSON与图片**严格同名**
 2. 仅识别矩形标注（shape_type=rectangle）
 3. 有效标注必须包含完整坐标信息
-4. 标签名称需在CLASS_MAP中定义
+4. 标签名称需在keyword中定义
 
 **示例标注文件：**
 ```json
